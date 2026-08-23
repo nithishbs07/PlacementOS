@@ -33,9 +33,8 @@ def startup_event():
         # Idempotent seeding check: if there are no companies, the ephemeral/new DB is empty
         if db.query(Company).count() == 0:
             print("Database is empty. Running production demo seeding...")
-            generate_mock_data(db)
-            print("Generating initial active schedule...")
-            create_schedule(db)
+            from app.api.router import generate_initial_schedule
+            generate_initial_schedule(db)
             print("Production seeding complete.")
     finally:
         db.close()

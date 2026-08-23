@@ -778,6 +778,15 @@ def execute_replan_task(db: Session, parent_version_id: int):
         # We will just map it to SOLVING, and when it returns we say VALIDATING.
         replan_job_store["stage"] = "LEXICOGRAPHIC SOLVING"
         
+        # Apply any pending disruptions for the active schedule before generating
+        pending_disruptions = db.query(Disruption).filter_by(
+            schedule_version_id=parent_version_id, 
+            status=DisruptionStatus.PENDING
+        ).all()
+        for d in pending_disruptions:
+            apply_disruption(db, d.id)
+            log_action(db, "Disruption applied by Replan Engine", "Disruption", d.id, parent_version_id, metadata={"type": d.disruption_type.name})
+            
         status, solver, vars_map, rooms, panels = create_schedule(db, parent_version_id=parent_version_id)
         
         replan_job_store["stage"] = "VALIDATING"

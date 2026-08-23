@@ -74,7 +74,7 @@ export default function ReplanWorkspace() {
 
       const dRes = await fetch(`${API_BASE_URL}/api/disruptions`);
       const dData = await dRes.json();
-      setDisruptions(dData.filter((d: any) => d.status === "APPLIED"));
+      setDisruptions(dData.filter((d: any) => d.status === "PENDING"));
       
       const jobRes = await fetch(`${API_BASE_URL}/api/replan/status`);
       const jobData = await jobRes.json();
@@ -158,7 +158,7 @@ export default function ReplanWorkspace() {
           <div className="bg-white border rounded-xl p-5 shadow-sm">
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Disruption Delta</h3>
             <div className="text-3xl font-bold text-red-600 mb-1">{disruptions.length}</div>
-            <div className="text-xs text-red-500 uppercase font-semibold">Applied Disruptions Pending Replan</div>
+            <div className="text-xs text-red-500 uppercase font-semibold">Pending Disruptions</div>
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
               {disruptions.slice(0, 3).map(d => (
                 <Badge key={d.id} variant="outline" className="bg-red-50 text-red-700 border-red-200 text-[10px] whitespace-nowrap">
