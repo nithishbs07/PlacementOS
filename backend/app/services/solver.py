@@ -173,50 +173,40 @@ def create_schedule(db: Session, parent_version_id: int = None):
                 day_changed_vars.append(is_day_changed)
                 time_changed_vars.append(is_time_changed)
 
-        print("\nREPLAN LEXICOGRAPHIC SOLVE")
+        print("\nREPLAN LEXICOGRAPHIC SOLVE (Single Weighted Objective)")
         print("────────────────────────────────────")
 
-        # STAGE 1: Maximize Preserved
-        t0 = time.time()
-        model.Maximize(sum(preserved_vars))
-        s1 = get_solver(time_limit=10.0)
-        s1_status = s1.Solve(model)
-        status_str1 = s1.StatusName(s1_status)
-        p_opt = int(s1.ObjectiveValue()) if s1_status in [cp_model.FEASIBLE, cp_model.OPTIMAL] else 0
-        print(f"Stage 1\n  Status: {status_str1}\n  Objective: preserved appointments\n  Optimal preserved: {p_opt}\n  Runtime: {time.time()-t0:.2f}s\n")
-        model.Add(sum(preserved_vars) >= p_opt)
-
-        # STAGE 2: Maximize Retained (Minimize Cancellations)
-        t0 = time.time()
-        model.Maximize(sum(retained_vars))
-        s2 = get_solver(time_limit=10.0)
-        s2_status = s2.Solve(model)
-        status_str2 = s2.StatusName(s2_status)
-        e_opt = int(s2.ObjectiveValue()) if s2_status in [cp_model.FEASIBLE, cp_model.OPTIMAL] else 0
-        print(f"Stage 2\n  Status: {status_str2}\n  Objective: retained existing appointments\n  Optimal retained: {e_opt}\n  Runtime: {time.time()-t0:.2f}s\n")
-        model.Add(sum(retained_vars) >= e_opt)
-
-        # STAGE 3: Minimize Temporal Movement
-        t0 = time.time()
-        model.Minimize(sum(day_changed_vars) * 1000 + sum(time_changed_vars))
-        s3 = get_solver(time_limit=10.0)
-        s3_status = s3.Solve(model)
-        status_str3 = s3.StatusName(s3_status)
-        m_opt = int(s3.ObjectiveValue()) if s3_status in [cp_model.FEASIBLE, cp_model.OPTIMAL] else sum(v["sl"].company_id for v in vars_map.values())*1000 # fallback
-        print(f"Stage 3\n  Status: {status_str3}\n  Objective: temporal movement\n  Minimum movement: {m_opt}\n  Runtime: {time.time()-t0:.2f}s\n")
-        model.Add(sum(day_changed_vars) * 1000 + sum(time_changed_vars) <= m_opt)
-
-        # STAGE 4: Coverage Recovery
-        t0 = time.time()
         scheduled_interviews = [v["is_scheduled"] for v in vars_map.values()]
         priority_score = sum(v["is_scheduled"] * (4 - company_by_id[v["sl"].company_id].priority_tier) for v in vars_map.values())
-        model.Maximize(sum(scheduled_interviews) * 1000 + priority_score)
-        
-        solver = get_solver(time_limit=20.0)
+
+        W_PRESERVED = 25_000_000_000_000
+        W_RETAINED = 11_000_000_000
+        W_SCHEDULED = 5_000_000
+        W_DAY_CHANGE = 2500
+        W_TIME_CHANGE = 1
+
+        model.Maximize(
+            sum(preserved_vars) * W_PRESERVED +
+            sum(retained_vars) * W_RETAINED +
+            sum(scheduled_interviews) * W_SCHEDULED +
+            priority_score -
+            (sum(day_changed_vars) * W_DAY_CHANGE + sum(time_changed_vars) * W_TIME_CHANGE)
+        )
+
+        t0 = time.time()
+        solver = get_solver(time_limit=45.0)
         status = solver.Solve(model)
-        status_str4 = solver.StatusName(status)
-        s_opt = sum(solver.Value(v["is_scheduled"]) for v in vars_map.values()) if status in [cp_model.FEASIBLE, cp_model.OPTIMAL] else 0
-        print(f"Stage 4\n  Status: {status_str4}\n  Objective: coverage recovery\n  Scheduled: {s_opt}\n  Runtime: {time.time()-t0:.2f}s\n────────────────────────────────────")
+        status_str = solver.StatusName(status)
+        
+        if status in [cp_model.FEASIBLE, cp_model.OPTIMAL]:
+            p_opt = sum(solver.Value(v) for v in preserved_vars)
+            e_opt = sum(solver.Value(v) for v in retained_vars)
+            s_opt = sum(solver.Value(v) for v in scheduled_interviews)
+            m_day = sum(solver.Value(v) for v in day_changed_vars)
+            m_time = sum(solver.Value(v) for v in time_changed_vars)
+            print(f"Status: {status_str}\n  Runtime: {time.time()-t0:.2f}s\n  Preserved: {p_opt}\n  Retained: {e_opt}\n  Scheduled: {s_opt}\n  Movement (Days/Times): {m_day}/{m_time}\n────────────────────────────────────")
+        else:
+            print(f"Status: {status_str}\n  Runtime: {time.time()-t0:.2f}s\n────────────────────────────────────")
 
     else:
         # V1 Baseline mode (Just Coverage)

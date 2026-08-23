@@ -1,0 +1,364 @@
+
+> temp-app@0.1.0 lint
+> eslint
+
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/analysis/page.tsx
+   6:33   warning  'ArrowRightCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   6:51   warning  'CheckCircle2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   6:65   warning  'XCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   6:96   warning  'History' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   6:105  warning  'AlertCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   6:128  warning  'RefreshCw' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  91:7    error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/analysis/page.tsx:91:7
+  89 |   useEffect(() => {
+  90 |     if (v1 && v2) {
+> 91 |       setLoadingDiff(true);
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  92 |       fetch(`${API_BASE_URL}/api/schedule/${v1}/diff/${v2}`)
+  93 |         .then(res => res.json())
+  94 |         .then(data => {  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/analytics/page.tsx
+  249:54  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/companies/page.tsx
+  85:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/companies/page.tsx:85:5
+  83 |
+  84 |   useEffect(() => {
+> 85 |     fetchCompanies();
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  86 |   }, []);
+  87 |
+  88 |   const formatTime = (minutes: number) => {  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/disruptions/page.tsx
+   6:71  warning  'Play' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  54:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/disruptions/page.tsx:54:5
+  52 |
+  53 |   useEffect(() => {
+> 54 |     fetchDisruptions();
+     |     ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  55 |   }, []);
+  56 |
+  57 |   const handleCreate = async () => {  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/history/page.tsx
+  6:41  warning  'ArrowDown' is defined but never used     @typescript-eslint/no-unused-vars
+  6:62  warning  'CalendarDays' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/layout.tsx
+  4:89  warning  'Workflow' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/operations/page.tsx
+   83:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/operations/page.tsx:83:5
+  81 |
+  82 |   useEffect(() => {
+> 83 |     fetchStatus().then(() => setLoading(false));
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  84 |     fetchVersions();
+  85 |     const interval = setInterval(fetchStatus, 2000);
+  86 |     return () => clearInterval(interval);  react-hooks/set-state-in-effect
+  145:50  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/operations/page.tsx:145:50
+  143 |               <div className="flex justify-between text-sm font-medium text-blue-900 mb-2">
+  144 |                 <span>Phase: {job?.stage}</span>
+> 145 |                 <span className="tabular-nums">{(Date.now() / 1000 - (job?.start_time || 0)).toFixed(0)}s</span>
+      |                                                  ^^^^^^^^^^ Cannot call impure function
+  146 |               </div>
+  147 |               <div className="h-2 bg-blue-100 rounded-full overflow-hidden">
+  148 |                 <div className="h-full bg-blue-600 rounded-full animate-pulse w-full"></div>                                                                                    react-hooks/purity
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/page.tsx
+    7:37  warning  'AlertCircle' is defined but never used                          @typescript-eslint/no-unused-vars
+    7:77  warning  'Loader2' is defined but never used                              @typescript-eslint/no-unused-vars
+   14:38  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   95:83  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  188:49  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/panels/page.tsx
+  100:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/panels/page.tsx:100:5
+   98 |
+   99 |   useEffect(() => {
+> 100 |     fetchPanels();
+      |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  101 |   }, []);
+  102 |
+  103 |   const formatTime = (minutes: number | null) => {  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/replan/page.tsx
+   66:50  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   77:39  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   89:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/replan/page.tsx:89:5
+  87 |
+  88 |   useEffect(() => {
+> 89 |     fetchData();
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  90 |     const interval = setInterval(() => {
+  91 |       fetchData();
+  92 |     }, 2000);  react-hooks/set-state-in-effect
+  226:69  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/replan/page.tsx:226:69
+  224 |               <p className="text-sm text-blue-700 text-center font-medium animate-pulse">
+  225 |                 Optimization Stage: <span className="font-bold">{job?.stage}</span>
+> 226 |                 <span className="ml-4 tabular-nums text-blue-500">{(Date.now() / 1000 - (job?.start_time || 0)).toFixed(0)}s elapsed</span>
+      |                                                                     ^^^^^^^^^^ Cannot call impure function
+  227 |               </p>
+  228 |             </div>
+  229 |           )}                                                                     react-hooks/purity
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/rooms/page.tsx
+  80:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/rooms/page.tsx:80:5
+  78 |
+  79 |   useEffect(() => {
+> 80 |     fetchRooms();
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  81 |   }, []);
+  82 |
+  83 |   const formatTime = (minutes: number | null) => {  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/schedule/page.tsx
+   6:65  warning  'Users' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  27:44  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
+  69:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/schedule/page.tsx:69:5
+  67 |
+  68 |   useEffect(() => {
+> 69 |     fetchActiveSchedule();
+     |     ^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  70 |   }, []);
+  71 |
+  72 |   const handleGenerate = async () => {  react-hooks/set-state-in-effect
+  70:6   warning  React Hook useEffect has a missing dependency: 'fetchActiveSchedule'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             react-hooks/exhaustive-deps
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/students/page.tsx
+   6:56  warning  'Edit' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  83:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/students/page.tsx:83:5
+  81 |
+  82 |   useEffect(() => {
+> 83 |     fetchStudents();
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  84 |   }, []);
+  85 |
+  86 |   const formatTime = (minutes: number | null) => {  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/validation/page.tsx
+   6:46  warning  'AlertTriangle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  53:7   error    Error: Cannot access variable before it is declared
+
+`runValidation` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/validation/page.tsx:53:7
+  51 |   useEffect(() => {
+  52 |     if (activeVersion) {
+> 53 |       runValidation(activeVersion);
+     |       ^^^^^^^^^^^^^ `runValidation` accessed before it is declared
+  54 |     }
+  55 |   }, [activeVersion]);
+  56 |
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/app/validation/page.tsx:57:3
+  55 |   }, [activeVersion]);
+  56 |
+> 57 |   const runValidation = async (versionId: number) => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 58 |     setValidating(true);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 59 |     setValidation(null);
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |     setValidating(false);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |   };
+     | ^^^^^ `runValidation` is declared here
+  71 |
+  72 |   if (loading) {
+  73 |     return (  react-hooks/immutability
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/BackgroundVideo.tsx
+  13:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/BackgroundVideo.tsx:13:5
+  11 |
+  12 |   useEffect(() => {
+> 13 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |   }, []);
+  15 |
+  16 |   if (!mounted) return null;  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/StartupExperience.tsx
+  19:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/StartupExperience.tsx:19:7
+  17 |     
+  18 |     if (!hasStarted && !prefersReducedMotion) {
+> 19 |       setShow(true);
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  20 |       
+  21 |       // Update status text over time to simulate boot sequence
+  22 |       const t1 = setTimeout(() => setStatusText("Loading scheduling engine..."), 800);                                                                                                                                                     react-hooks/set-state-in-effect
+  28:9  error  Error: Cannot access variable before it is declared
+
+`finishStartup` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/StartupExperience.tsx:28:9
+  26 |       // Trigger fade out at 3 seconds
+  27 |       const fadeTimer = setTimeout(() => {
+> 28 |         finishStartup();
+     |         ^^^^^^^^^^^^^ `finishStartup` accessed before it is declared
+  29 |       }, 3200);
+  30 |
+  31 |       return () => {
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/StartupExperience.tsx:40:3
+  38 |   }, []);
+  39 |
+> 40 |   const finishStartup = () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |     setFading(true);
+     | ^^^^^^^^^^^^^^^^^^^^
+> 42 |     // Unmount completely after fade transition completes (500ms)
+     | ^^^^^^^^^^^^^^^^^^^^
+> 43 |     setTimeout(() => {
+     | ^^^^^^^^^^^^^^^^^^^^
+> 44 |       sessionStorage.setItem("placementos_started", "true");
+     | ^^^^^^^^^^^^^^^^^^^^
+> 45 |       setShow(false);
+     | ^^^^^^^^^^^^^^^^^^^^
+> 46 |     }, 500);
+     | ^^^^^^^^^^^^^^^^^^^^
+> 47 |   };
+     | ^^^^^ `finishStartup` is declared here
+  48 |
+  49 |   if (!show) return null;
+  50 |  react-hooks/immutability
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/ThemeProvider.tsx
+  17:10  warning  'mounted' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  23:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/ThemeProvider.tsx:23:7
+  21 |     const stored = localStorage.getItem("placementos-theme") as Theme;
+  22 |     if (stored === "dark" || stored === "light") {
+> 23 |       setThemeState(stored);
+     |       ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  24 |       if (stored === "dark") document.documentElement.classList.add("dark");
+  25 |     } else {
+  26 |       // Check system preference  react-hooks/set-state-in-effect
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/ThemeToggle.tsx
+  11:19  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nix/.gemini/antigravity/scratch/placement-scheduler/frontend/src/components/ThemeToggle.tsx:11:19
+   9 |   const [mounted, setMounted] = useState(false);
+  10 |
+> 11 |   useEffect(() => setMounted(true), []);
+     |                   ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  12 |
+  13 |   if (!mounted) {
+  14 |     return (  react-hooks/set-state-in-effect
+
+✖ 41 problems (23 errors, 18 warnings)
+

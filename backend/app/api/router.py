@@ -634,10 +634,17 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
                 "room": iv.room.name if iv.room else "TBD"
             })
 
+    scheduled_students_count = 0
+    if active_version:
+        scheduled_students_count = db.query(Interview.student_id).filter_by(
+            schedule_version_id=active_version.id, 
+            status=InterviewStatus.SCHEDULED
+        ).distinct().count()
+
     return {
         "total_companies": total_companies,
         "total_rooms": total_rooms,
-        "scheduled_students": total_students,
+        "scheduled_students": scheduled_students_count if active_version else total_students,
         "today_interviews": scheduled_interviews,
         "utilization": round(utilization),
         "conflicts": conflicts,
@@ -807,14 +814,18 @@ def execute_replan_task(db: Session, parent_version_id: int):
             for idx, v in vars_map.items():
                 if solver.Value(v["is_scheduled"]):
                     scheduled_count += 1
+                    c_id = v["sl"].company_id
+                    c = db.query(Company).get(c_id)
+                    duration = c.interview_duration if c else 30
                     iv = Interview(
                         schedule_version_id=new_version.id,
                         student_id=v["sl"].student_id,
-                        company_id=v["sl"].company_id,
+                        company_id=c_id,
                         day=(solver.Value(v["start"]) // 1440) + 1,
                         start_time=solver.Value(v["start"]) % 1440,
+                        end_time=(solver.Value(v["start"]) % 1440) + duration,
                         room_id=rooms[v.get("room_assigned_value")].id if rooms and v.get("room_assigned_value") is not None else None,
-                        panel_id=panels[v["sl"].company_id][v.get("panel_assigned_value")].id if panels and v.get("panel_assigned_value") is not None else None,
+                        panel_id=panels[c_id][v.get("panel_assigned_value")].id if panels and v.get("panel_assigned_value") is not None else None,
                         status=InterviewStatus.SCHEDULED
                     )
                     db.add(iv)
