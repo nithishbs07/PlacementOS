@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, Activity, CheckCircle2, XCircle, AlertCircle, RefreshCw, BarChart2, ShieldCheck, Zap, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface ValidationResult {
   is_valid: boolean;
@@ -66,15 +68,15 @@ export default function ReplanWorkspace() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/operations/status");
+      const res = await fetch(`${API_BASE_URL}/api/operations/status`);
       const data = await res.json();
       setActiveStats(data.active_schedule);
 
-      const dRes = await fetch("http://localhost:8000/api/disruptions");
+      const dRes = await fetch(`${API_BASE_URL}/api/disruptions`);
       const dData = await dRes.json();
       setDisruptions(dData.filter((d: any) => d.status === "APPLIED"));
       
-      const jobRes = await fetch("http://localhost:8000/api/replan/status");
+      const jobRes = await fetch(`${API_BASE_URL}/api/replan/status`);
       const jobData = await jobRes.json();
       setJob(jobData);
     } catch (err) {
@@ -94,7 +96,7 @@ export default function ReplanWorkspace() {
   const handleReplan = async () => {
     if (!activeStats?.version_id) return;
     try {
-      await fetch(`http://localhost:8000/api/schedule/${activeStats.version_id}/replan`, { method: "POST" });
+      await fetch(`${API_BASE_URL}/api/schedule/${activeStats.version_id}/replan`, { method: "POST" });
       fetchData();
     } catch (err) {
       console.error(err);

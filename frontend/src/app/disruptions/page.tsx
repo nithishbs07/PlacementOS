@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertTriangle, Plus, Search, Eye, CheckCircle2, AlertCircle, Play, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface Disruption {
   id: number;
@@ -40,7 +42,7 @@ export default function DisruptionCenter() {
 
   const fetchDisruptions = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/disruptions");
+      const res = await fetch(`${API_BASE_URL}/api/disruptions`);
       setDisruptions(await res.json());
       setLoading(false);
     } catch (err) {
@@ -55,7 +57,7 @@ export default function DisruptionCenter() {
   const handleCreate = async () => {
     if (!formTarget) return alert("Target ID is required");
     try {
-      const res = await fetch("http://localhost:8000/api/disruptions", {
+      const res = await fetch(`${API_BASE_URL}/api/disruptions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -80,7 +82,7 @@ export default function DisruptionCenter() {
     setSelectedDisruption(d);
     setPreviewLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/disruptions/${d.id}/preview`, { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/api/disruptions/${d.id}/preview`, { method: "POST" });
       if (res.ok) {
         setPreview(await res.json());
       }
@@ -93,7 +95,7 @@ export default function DisruptionCenter() {
   const handleApply = async (id: number) => {
     if (!confirm("Are you sure you want to apply this disruption to the active schedule?")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/disruptions/${id}/apply`, { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/api/disruptions/${id}/apply`, { method: "POST" });
       if (res.ok) {
         fetchDisruptions();
         if (selectedDisruption?.id === id) {

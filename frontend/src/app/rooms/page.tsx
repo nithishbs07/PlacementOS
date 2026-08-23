@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, MapPin, X, Calendar, Trash2 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface Room {
   id: number;
@@ -35,7 +37,7 @@ export default function RoomManagement() {
   const fetchRooms = async () => {
     setStatus("loading");
     try {
-      const res = await fetch("http://localhost:8000/api/rooms");
+      const res = await fetch(`${API_BASE_URL}/api/rooms`);
       if (!res.ok) throw new Error("Failed to fetch rooms");
       setRooms(await res.json());
       setStatus("success");
@@ -48,7 +50,7 @@ export default function RoomManagement() {
   const fetchRoomDetail = async (id: number) => {
     setLoadingDetail(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/rooms/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/rooms/${id}`);
       if (res.ok) {
         setSelectedRoom(await res.json());
       }
@@ -61,7 +63,7 @@ export default function RoomManagement() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this room? It will be blocked if there are existing schedules.")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/rooms/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE_URL}/api/rooms/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchRooms();
         if (selectedRoom?.id === id) setSelectedRoom(null);

@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Filter, Search, Zap, Play, X, Clock, MapPin, Users, History as HistoryIcon, UserCircle, Building, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface Interview {
   id: number;
@@ -32,7 +34,7 @@ export default function ScheduleWorkspace() {
   const fetchActiveSchedule = async () => {
     setStatus("loading");
     try {
-      const res = await fetch("http://localhost:8000/api/schedule/active");
+      const res = await fetch(`${API_BASE_URL}/api/schedule/active`);
       if (res.status === 404) {
         setInterviews([]);
         setActiveVersionId(null);
@@ -54,7 +56,7 @@ export default function ScheduleWorkspace() {
 
   const fetchVersions = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/schedule/versions");
+      const res = await fetch(`${API_BASE_URL}/api/schedule/versions`);
       if (res.ok) {
         setVersions(await res.json());
       }
@@ -70,7 +72,7 @@ export default function ScheduleWorkspace() {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      const res = await fetch("http://localhost:8000/api/schedule/generate", { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/api/schedule/generate`, { method: "POST" });
       if (res.ok) {
         await fetchActiveSchedule();
       }

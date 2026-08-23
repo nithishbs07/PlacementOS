@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, GraduationCap, X, Building, Calendar, Edit, Trash2 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface Student {
   id: number;
@@ -38,7 +40,7 @@ export default function StudentManagement() {
   const fetchStudents = async () => {
     setStatus("loading");
     try {
-      const res = await fetch("http://localhost:8000/api/students");
+      const res = await fetch(`${API_BASE_URL}/api/students`);
       if (!res.ok) throw new Error("Failed to fetch students");
       setStudents(await res.json());
       setStatus("success");
@@ -51,7 +53,7 @@ export default function StudentManagement() {
   const fetchStudentDetail = async (id: number) => {
     setLoadingDetail(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/students/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/students/${id}`);
       if (res.ok) {
         setSelectedStudent(await res.json());
       }
@@ -64,7 +66,7 @@ export default function StudentManagement() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to remove or withdraw this student?")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/students/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE_URL}/api/students/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchStudents();
         if (selectedStudent?.id === id) setSelectedStudent(null);

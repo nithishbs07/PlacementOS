@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, Activity, CheckCircle2, XCircle, AlertCircle, Clock, Calendar, CheckSquare, Settings } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface ValidationResult {
   is_valid: boolean;
@@ -59,7 +61,7 @@ export default function OperationsCenter() {
 
   const fetchStatus = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/operations/status");
+      const res = await fetch(`${API_BASE_URL}/api/operations/status`);
       const data = await res.json();
       setJob(data.job);
       setActiveStats(data.active_schedule);
@@ -70,7 +72,7 @@ export default function OperationsCenter() {
 
   const fetchVersions = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/schedule/versions");
+      const res = await fetch(`${API_BASE_URL}/api/schedule/versions`);
       setVersions(await res.json());
     } catch (err) {
       console.error(err);
@@ -86,7 +88,7 @@ export default function OperationsCenter() {
 
   const handleGenerate = async () => {
     try {
-      await fetch("http://localhost:8000/api/schedule/generate", { method: "POST" });
+      await fetch(`${API_BASE_URL}/api/schedule/generate`, { method: "POST" });
       fetchStatus();
     } catch (err) {
       console.error(err);

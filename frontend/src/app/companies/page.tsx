@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Building2, X, Clock, Calendar, Users, Trash2 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface Company {
   id: number;
@@ -40,7 +42,7 @@ export default function CompanyManagement() {
   const fetchCompanies = async () => {
     setStatus("loading");
     try {
-      const res = await fetch("http://localhost:8000/api/companies");
+      const res = await fetch(`${API_BASE_URL}/api/companies`);
       if (!res.ok) throw new Error("Failed to fetch companies");
       setCompanies(await res.json());
       setStatus("success");
@@ -53,7 +55,7 @@ export default function CompanyManagement() {
   const fetchCompanyDetail = async (id: number) => {
     setLoadingDetail(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/companies/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/companies/${id}`);
       if (res.ok) {
         setSelectedCompany(await res.json());
       }
@@ -66,7 +68,7 @@ export default function CompanyManagement() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this company? This action cannot be undone unless it is protected by existing schedules.")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/companies/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE_URL}/api/companies/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchCompanies();
         if (selectedCompany?.id === id) setSelectedCompany(null);

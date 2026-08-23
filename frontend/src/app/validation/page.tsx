@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShieldCheck, CheckCircle2, XCircle, AlertTriangle, ShieldAlert, Activity, FileCheck2, Database, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface ValidationResult {
   is_valid: boolean;
@@ -34,7 +36,7 @@ export default function ValidationDefense() {
   const [validating, setValidating] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/schedule/versions")
+    fetch(`${API_BASE_URL}/api/schedule/versions`)
       .then(res => res.json())
       .then(data => {
         setVersions(data);
@@ -58,7 +60,7 @@ export default function ValidationDefense() {
     try {
       // Add artificial delay to make the validation feel more substantial/heavy
       await new Promise(r => setTimeout(r, 600));
-      const res = await fetch(`http://localhost:8000/api/schedule/${versionId}/validation`);
+      const res = await fetch(`${API_BASE_URL}/api/schedule/${versionId}/validation`);
       const data = await res.json();
       setValidation(data);
     } catch (err) {

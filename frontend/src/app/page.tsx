@@ -7,13 +7,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Building, Users, AlertCircle, CheckCircle2, ServerCrash, Loader2, Info, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { API_BASE_URL } from "@/lib/api";
+
 
 export default function Dashboard() {
   const [stats, setStats] = useState<any>(null);
   const [status, setStatus] = useState<"loading" | "error" | "success">("loading");
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/dashboard/stats")
+    fetch(`${API_BASE_URL}/api/dashboard/stats`)
       .then(res => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { History, GitCommit, GitBranch, ArrowDown, Activity, CalendarDays, ShieldCheck, Zap, Database } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface AuditLog {
   id: number;
@@ -34,8 +36,8 @@ export default function HistoryWorkspace() {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:8000/api/audit-logs").then(r => r.json()),
-      fetch("http://localhost:8000/api/schedule/lineage").then(r => r.json())
+      fetch(`${API_BASE_URL}/api/audit-logs`).then(r => r.json()),
+      fetch(`${API_BASE_URL}/api/schedule/lineage`).then(r => r.json())
     ]).then(([logsData, lineageData]) => {
       setLogs(logsData);
       setLineage(lineageData);

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, X, Calendar, Trash2, Users } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface Panel {
   id: number;
@@ -37,7 +39,7 @@ export default function PanelManagement() {
   const fetchPanels = async () => {
     setStatus("loading");
     try {
-      const res = await fetch("http://localhost:8000/api/panels");
+      const res = await fetch(`${API_BASE_URL}/api/panels`);
       if (!res.ok) throw new Error("Failed to fetch panels");
       setPanels(await res.json());
       setStatus("success");
@@ -50,7 +52,7 @@ export default function PanelManagement() {
   const fetchPanelDetail = async (id: number) => {
     setLoadingDetail(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/panels/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/panels/${id}`);
       if (res.ok) {
         setSelectedPanel(await res.json());
       }
@@ -63,7 +65,7 @@ export default function PanelManagement() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete or deactivate this panel?")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/panels/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE_URL}/api/panels/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchPanels();
         if (selectedPanel?.id === id) fetchPanelDetail(id);
@@ -78,7 +80,7 @@ export default function PanelManagement() {
 
   const toggleStatus = async (id: number, currentStatus: boolean) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/panels/${id}`, { 
+      const res = await fetch(`${API_BASE_URL}/api/panels/${id}`, { 
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ is_active: !currentStatus })

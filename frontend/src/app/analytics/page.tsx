@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart3, TrendingUp, Building2, Users, AlertTriangle, Workflow, Box } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface AnalyticsData {
   kpis: {
@@ -40,7 +42,7 @@ export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/analytics")
+    fetch(`${API_BASE_URL}/api/analytics`)
       .then(res => res.json())
       .then(resData => {
         setData(resData);

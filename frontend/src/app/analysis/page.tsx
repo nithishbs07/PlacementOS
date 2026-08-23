@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart3, ArrowRight, ArrowRightCircle, CheckCircle2, XCircle, Clock, MapPin, Users, History, AlertCircle, Calendar, RefreshCw, Search, AlertTriangle, Filter, Activity } from "lucide-react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
+
 
 interface ScheduleVersion {
   id: number;
@@ -71,7 +73,7 @@ export default function ImpactAnalysis() {
   const [selectedDetail, setSelectedDetail] = useState<InterviewDiff | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/schedule/versions")
+    fetch(`${API_BASE_URL}/api/schedule/versions`)
       .then(res => res.json())
       .then(data => {
         setVersions(data);
@@ -87,7 +89,7 @@ export default function ImpactAnalysis() {
   useEffect(() => {
     if (v1 && v2) {
       setLoadingDiff(true);
-      fetch(`http://localhost:8000/api/schedule/${v1}/diff/${v2}`)
+      fetch(`${API_BASE_URL}/api/schedule/${v1}/diff/${v2}`)
         .then(res => res.json())
         .then(data => {
           setDiffData(data);
