@@ -92,13 +92,38 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Demand Coverage</CardTitle>
+            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">
+              {stats.total_demand > 0 ? Math.round((stats.today_interviews / stats.total_demand) * 100) : 0}%
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {stats.unscheduled_interviews} unscheduled items
+              {stats.unscheduled_reasons && Object.keys(stats.unscheduled_reasons).length > 0 && (
+                <div className="mt-2 space-y-1">
+                  {Object.entries(stats.unscheduled_reasons).map(([reason, count]) => (
+                    <div key={reason} className="flex justify-between">
+                      <span>{reason}:</span>
+                      <span className="font-medium">{count as React.ReactNode}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Today's Interviews</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{stats.today_interviews}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              across {stats.total_rooms} rooms
+              out of {stats.total_demand} demand
             </p>
           </CardContent>
         </Card>
@@ -112,19 +137,6 @@ export default function Dashboard() {
             <div className="text-3xl font-bold">{stats.scheduled_students}</div>
             <p className="text-xs text-muted-foreground mt-1">
               active candidates
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Companies</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.total_companies}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              participating
             </p>
           </CardContent>
         </Card>

@@ -25,9 +25,11 @@ def validate_schedule(db: Session, version_id: int):
         company = companies.get(i.company_id)
         if not company: continue
         
+        if i.end_time is None:
+            raise ValueError(f"Interview {i.id} has NULL end_time in the database.")
+            
         start_abs = (i.day - 1) * 1440 + i.start_time
-        duration = company.interview_duration
-        end_abs = start_abs + duration
+        end_abs = (i.day - 1) * 1440 + i.end_time
         
         s_times[i.student_id].append((start_abs, end_abs))
         if i.room_id is not None:

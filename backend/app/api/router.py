@@ -70,10 +70,14 @@ class DisruptionCreate(BaseModel):
 def get_companies(db: Session = Depends(get_db)):
     # Include shortlist count
     companies = db.query(Company).all()
+    active_version = db.query(ScheduleVersion).order_by(ScheduleVersion.id.desc()).first()
     res = []
     for c in companies:
         shortlist_count = db.query(StudentShortlist).filter_by(company_id=c.id).count()
-        scheduled_count = db.query(Interview).filter_by(company_id=c.id, status=InterviewStatus.SCHEDULED).count()
+        if active_version:
+            scheduled_count = db.query(Interview).filter_by(company_id=c.id, schedule_version_id=active_version.id, status=InterviewStatus.SCHEDULED).count()
+        else:
+            scheduled_count = 0
         res.append({
             "id": c.id,
             "name": c.name,
@@ -423,18 +427,35 @@ def generate_schedule_task(db: Session, parent_version_id: int):
         scheduled_count = 0
         from ortools.sat.python import cp_model
         if status in [cp_model.FEASIBLE, cp_model.OPTIMAL]:
+            # Regression guard
+            scheduled_count = sum(1 for v in vars_map.values() if solver.Value(v["is_scheduled"]))
+            if len(vars_map) > 0 and scheduled_count < len(vars_map) * 0.1:
+                raise Exception("Implausibly low schedule coverage returned by solver (collapse detected).")
+
             for idx, v in vars_map.items():
+                c_id = v["sl"].company_id
+                c = db.query(Company).get(c_id)
+                duration = c.interview_duration if c else 30
                 if solver.Value(v["is_scheduled"]):
-                    scheduled_count += 1
                     iv = Interview(
                         schedule_version_id=new_version.id,
                         student_id=v["sl"].student_id,
-                        company_id=v["sl"].company_id,
+                        company_id=c_id,
                         day=(solver.Value(v["start"]) // 1440) + 1,
                         start_time=solver.Value(v["start"]) % 1440,
+                        end_time=(solver.Value(v["start"]) % 1440) + duration,
                         room_id=rooms[v.get("room_assigned_value")].id if rooms and v.get("room_assigned_value") is not None else None,
-                        panel_id=panels_by_company[v["sl"].company_id][v.get("panel_assigned_value")].id if panels_by_company and v.get("panel_assigned_value") is not None else None,
+                        panel_id=panels_by_company[c_id][v.get("panel_assigned_value")].id if panels_by_company and v.get("panel_assigned_value") is not None else None,
                         status=InterviewStatus.SCHEDULED
+                    )
+                    db.add(iv)
+                else:
+                    iv = Interview(
+                        schedule_version_id=new_version.id,
+                        student_id=v["sl"].student_id,
+                        company_id=c_id,
+                        status=InterviewStatus.UNSCHEDULED,
+                        unscheduled_reason="NO_FEASIBLE_TIME_SLOT" # Base reason for initial generation
                     )
                     db.add(iv)
             db.commit()
@@ -635,17 +656,30 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
             })
 
     scheduled_students_count = 0
+    unscheduled_count = 0
+    unscheduled_reasons = {}
     if active_version:
         scheduled_students_count = db.query(Interview.student_id).filter_by(
             schedule_version_id=active_version.id, 
             status=InterviewStatus.SCHEDULED
         ).distinct().count()
+        unscheduled_interviews = db.query(Interview).filter_by(
+            schedule_version_id=active_version.id, 
+            status=InterviewStatus.UNSCHEDULED
+        ).all()
+        unscheduled_count = len(unscheduled_interviews)
+        for iv in unscheduled_interviews:
+            reason = iv.unscheduled_reason or "UNKNOWN"
+            unscheduled_reasons[reason] = unscheduled_reasons.get(reason, 0) + 1
 
     return {
         "total_companies": total_companies,
         "total_rooms": total_rooms,
         "scheduled_students": scheduled_students_count if active_version else total_students,
         "today_interviews": scheduled_interviews,
+        "unscheduled_interviews": unscheduled_count,
+        "unscheduled_reasons": unscheduled_reasons,
+        "total_demand": scheduled_interviews + unscheduled_count,
         "utilization": round(utilization),
         "conflicts": conflicts,
         "pending_disruptions": pending_disruptions,
@@ -811,12 +845,17 @@ def execute_replan_task(db: Session, parent_version_id: int):
         
         v2_interviews_list = []
         if status in [cp_model.FEASIBLE, cp_model.OPTIMAL]:
+            v1_scheduled_count = db.query(Interview).filter_by(schedule_version_id=parent_version_id, status=InterviewStatus.SCHEDULED).count()
+            scheduled_count = sum(1 for v in vars_map.values() if solver.Value(v["is_scheduled"]))
+            
+            if v1_scheduled_count > 0 and scheduled_count < v1_scheduled_count * 0.5:
+                raise Exception("Implausibly low schedule coverage returned by solver (collapse detected).")
+
             for idx, v in vars_map.items():
+                c_id = v["sl"].company_id
+                c = db.query(Company).get(c_id)
+                duration = c.interview_duration if c else 30
                 if solver.Value(v["is_scheduled"]):
-                    scheduled_count += 1
-                    c_id = v["sl"].company_id
-                    c = db.query(Company).get(c_id)
-                    duration = c.interview_duration if c else 30
                     iv = Interview(
                         schedule_version_id=new_version.id,
                         student_id=v["sl"].student_id,
@@ -830,6 +869,15 @@ def execute_replan_task(db: Session, parent_version_id: int):
                     )
                     db.add(iv)
                     v2_interviews_list.append(iv)
+                else:
+                    iv = Interview(
+                        schedule_version_id=new_version.id,
+                        student_id=v["sl"].student_id,
+                        company_id=c_id,
+                        status=InterviewStatus.UNSCHEDULED,
+                        unscheduled_reason="NO_FEASIBLE_TIME_SLOT"
+                    )
+                    db.add(iv)
             db.commit()
             
         validation = validate_schedule(db, new_version.id)

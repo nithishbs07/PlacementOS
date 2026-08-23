@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/placement_db"
+    DATABASE_URL: str = "sqlite:///./placement.db"
     
     # Scheduler Weights (Configurable)
     WEIGHT_SCHEDULED: int = 10000
