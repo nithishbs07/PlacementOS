@@ -92,24 +92,49 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Demand Coverage</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Demand</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">
-              {stats.total_demand > 0 ? Math.round((stats.today_interviews / stats.total_demand) * 100) : 0}%
+            <div className="text-3xl font-bold">{stats.total_demand}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              total student shortlist requests
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Scheduled / Coverage</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-blue-600">{stats.today_interviews}</div>
+            <div className="text-xs font-medium mt-1">
+              Coverage: {stats.total_demand > 0 ? (stats.today_interviews / stats.total_demand * 100).toFixed(1) : 0}%
             </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Unscheduled</CardTitle>
+            <AlertCircle className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-destructive">{stats.unscheduled_interviews}</div>
             <div className="text-xs text-muted-foreground mt-1">
-              {stats.unscheduled_interviews} unscheduled items
-              {stats.unscheduled_reasons && Object.keys(stats.unscheduled_reasons).length > 0 && (
-                <div className="mt-2 space-y-1">
+              {stats.unscheduled_reasons && Object.keys(stats.unscheduled_reasons).length > 0 ? (
+                <div className="space-y-1">
                   {Object.entries(stats.unscheduled_reasons).map(([reason, count]) => (
                     <div key={reason} className="flex justify-between">
-                      <span>{reason}:</span>
+                      <span className="truncate pr-2">{reason}:</span>
                       <span className="font-medium">{count as React.ReactNode}</span>
                     </div>
                   ))}
                 </div>
+              ) : (
+                "No unscheduled reasons"
               )}
             </div>
           </CardContent>
@@ -117,40 +142,20 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Today's Interviews</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Resources</CardTitle>
+            <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.today_interviews}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              out of {stats.total_demand} demand
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Scheduled Students</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.scheduled_students}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              active candidates
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Utilization</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.utilization}%</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              resource capacity
-            </p>
+            <div className="flex flex-col space-y-2 mt-1">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Companies:</span>
+                <span className="text-lg font-bold">{stats.total_companies}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Rooms:</span>
+                <span className="text-lg font-bold">{stats.total_rooms}</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
