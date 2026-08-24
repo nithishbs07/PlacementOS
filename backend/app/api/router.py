@@ -512,17 +512,18 @@ def get_operations_status(db: Session = Depends(get_db)):
     
     return {
         "job": job_store,
+        "replan_job": replan_job_store,
         "active_schedule": stats
     }
 
 @router.post("/schedule/generate")
-def trigger_generation(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+def trigger_generation(background_tasks: BackgroundTasks, reset: bool = False, db: Session = Depends(get_db)):
     global job_store
     if job_store["status"] == "RUNNING":
         raise HTTPException(400, "A schedule generation job is already running.")
         
     active_version = db.query(ScheduleVersion).order_by(ScheduleVersion.id.desc()).first()
-    parent_id = active_version.id if active_version else None
+    parent_id = active_version.id if active_version and not reset else None
     
     job_store = {
         "status": "RUNNING",
@@ -698,7 +699,9 @@ def generate_initial_schedule(db: Session = Depends(get_db)):
     status, solver, vars_map, rooms, panels = create_schedule(db)
     
     if status in [4, 2]: # OPTIMAL=4, FEASIBLE=2 in OR-Tools Python
-        new_version = ScheduleVersion(version_number=1, status=ScheduleStatus.INITIAL)
+        last_v = db.query(ScheduleVersion).order_by(ScheduleVersion.id.desc()).first()
+        new_v_num = last_v.version_number + 1 if last_v else 1
+        new_version = ScheduleVersion(version_number=new_v_num, status=ScheduleStatus.INITIAL)
         db.add(new_version)
         db.commit()
         db.refresh(new_version)
